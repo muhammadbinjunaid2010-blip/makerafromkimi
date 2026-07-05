@@ -8,6 +8,9 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
+import Community from "./pages/Community";
+import Projects from "./pages/Projects";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import { useCart, type CartItem } from "./hooks/useCart";
 
@@ -45,6 +48,9 @@ function App() {
           <Route path="/shop/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

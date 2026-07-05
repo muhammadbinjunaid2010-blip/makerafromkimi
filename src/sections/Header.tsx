@@ -29,8 +29,10 @@ export default function Header() {
   };
 
   const navLinks = [
-    { label: "Shop", href: "/shop", scrollId: null },
-    { label: "Categories", href: null, scrollId: "categories" },
+    { label: "Community", href: "/community", scrollId: null },
+    { label: "Projects", href: "/projects", scrollId: null },
+    { label: "Blog", href: "/blog", scrollId: null },
+    { label: "Marketplace", href: "/shop", scrollId: null },
     { label: "About", href: null, scrollId: "why-choose" },
     { label: "Contact", href: null, scrollId: "contact" },
   ];
@@ -51,7 +53,7 @@ export default function Header() {
             scrolled || !isHome ? "text-slate-800" : "text-white"
           }`}
         >
-          ElectroCart
+          Makera
         </Link>
 
         {/* Desktop Nav */}

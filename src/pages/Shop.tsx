@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
-import { ShoppingCart, Filter, SlidersHorizontal } from "lucide-react";
+import { ShoppingCart, Filter, SlidersHorizontal, Search, X } from "lucide-react";
 import { products, categories } from "../data/products";
 import { useCartContext } from "../App";
 
@@ -14,11 +14,22 @@ export default function Shop() {
   );
   const [sortBy, setSortBy] = useState<string>("name");
   const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredProducts = useMemo(() => {
     let result = selectedCategory
       ? products.filter((p) => p.categoryId === selectedCategory)
       : [...products];
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          p.categoryName.toLowerCase().includes(q)
+      );
+    }
 
     if (sortBy === "price-low") {
       result.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
@@ -29,7 +40,7 @@ export default function Shop() {
     }
 
     return result;
-  }, [selectedCategory, sortBy]);
+  }, [selectedCategory, sortBy, searchQuery]);
 
   const handleAddToCart = (product: (typeof products)[0]) => {
     addItem({
@@ -45,52 +56,65 @@ export default function Shop() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="mb-8">
+          <p className="text-blue-600 font-semibold text-xs uppercase tracking-widest mb-2">
+            Marketplace
+          </p>
           <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-800 mb-2">
-            Shop
+            Components &amp; Tools
           </h1>
           <p className="text-slate-500">
             {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""} available
           </p>
         </div>
 
-        {/* Filters Bar */}
-        <div className="flex flex-wrap items-center gap-4 mb-8">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-            Filters
-          </button>
-
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="name">Sort by Name</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-          </select>
-
-          {selectedCategory && (
+        {/* Search + Filters Bar */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-8">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products..."
+              className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2">
             <button
-              onClick={() => setSelectedCategory(null)}
-              className="px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded-full font-medium hover:bg-blue-200 transition-colors"
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
             >
-              {categories.find((c) => c.id === selectedCategory)?.name} &times;
+              <SlidersHorizontal className="w-4 h-4" />
+              Filters
             </button>
-          )}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-4 py-3 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="name">Sort by Name</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
         </div>
 
         {/* Category Filters */}
         {showFilters && (
-          <div className="flex flex-wrap gap-2 mb-8 p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <div className="flex flex-wrap gap-2 mb-8 p-5 bg-slate-50 rounded-xl border border-slate-200">
             <button
               onClick={() => setSelectedCategory(null)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedCategory === null
-                  ? "bg-blue-600 text-white"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
               }`}
             >
@@ -102,13 +126,27 @@ export default function Shop() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedCategory === cat.id
-                    ? "bg-blue-600 text-white"
+                    ? "bg-blue-600 text-white shadow-sm"
                     : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
                 }`}
               >
                 {cat.name}
               </button>
             ))}
+          </div>
+        )}
+
+        {/* Active filter indicator */}
+        {selectedCategory && (
+          <div className="flex items-center gap-2 mb-6">
+            <span className="text-sm text-slate-500">Filtering by:</span>
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded-full font-medium hover:bg-blue-200 transition-colors"
+            >
+              {categories.find((c) => c.id === selectedCategory)?.name}
+              <X className="w-3.5 h-3.5" />
+            </button>
           </div>
         )}
 
@@ -155,12 +193,19 @@ export default function Shop() {
         {filteredProducts.length === 0 && (
           <div className="text-center py-20">
             <Filter className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500 text-lg">No products found</p>
+            <p className="text-slate-500 text-lg">
+              {searchQuery
+                ? "No products match your search"
+                : "No products found"}
+            </p>
             <button
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => {
+                setSelectedCategory(null);
+                setSearchQuery("");
+              }}
               className="mt-4 text-blue-600 font-medium hover:underline"
             >
-              Clear filters
+              Clear all filters
             </button>
           </div>
         )}

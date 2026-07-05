@@ -43,7 +43,7 @@ export default function Checkout() {
   };
 
   const generateWhatsAppOrder = () => {
-    let message = "*New Order from ElectroCart*\n\n";
+    let message = "*New Order from Makera*\n\n";
     message += `*Customer:* ${formData.fullName}\n`;
     message += `*Phone:* ${formData.phone}\n`;
     message += `*Email:* ${formData.email}\n`;

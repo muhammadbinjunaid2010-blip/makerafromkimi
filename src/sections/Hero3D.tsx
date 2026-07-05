@@ -267,58 +267,56 @@ export default function Hero3D() {
       <div className="relative z-10 flex items-center justify-center h-full px-4">
         <div className="text-center max-w-2xl mx-auto">
           <p
-            className="text-xs sm:text-sm font-medium uppercase tracking-[0.15em] text-white/70 mb-4"
+            className="text-xs sm:text-sm font-medium uppercase tracking-[0.15em] text-blue-400 mb-4"
             style={{
               animation: "fadeInUp 0.6s 0.2s both",
             }}
           >
-            Electronics Components Store
+            Makera Community
           </p>
 
           <h1
-            className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight"
+            className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-none"
             style={{
               textShadow: "0 2px 30px rgba(0,0,0,0.4)",
               animation: "fadeInUp 0.8s 0.4s both",
             }}
           >
-            Electronics Components
+            Built by Makers,
             <br />
-            Made Easy
+            <span className="text-blue-400">for Makers</span>
           </h1>
 
           <p
-            className="mt-4 text-base sm:text-lg text-white/85 max-w-lg mx-auto"
+            className="mt-6 text-base sm:text-lg text-white/85 max-w-2xl mx-auto leading-relaxed"
             style={{
               textShadow: "0 1px 10px rgba(0,0,0,0.3)",
               animation: "fadeInUp 0.7s 0.6s both",
             }}
           >
-            Arduino boards, sensors, modules, and project components for
-            students, makers, and engineers.
+            A community where electronics, robotics, embedded systems, AI, 3D
+            printing and makers come together to learn, build, share and
+            discover.
           </p>
 
           <div
-            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
             style={{
               animation: "fadeInUp 0.6s 0.8s both",
             }}
           >
             <Link
-              to="/shop"
-              className="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+              to="/community"
+              className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 hover:scale-105 transition-all duration-300 shadow-lg"
             >
-              Shop Now
+              Join Community
             </Link>
-            <a
-              href="https://wa.me/94771234567"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-8 py-3 bg-white/10 backdrop-blur text-white font-medium rounded-lg border border-white/30 hover:bg-white/20 transition-colors"
+            <Link
+              to="/projects"
+              className="flex items-center gap-2 px-8 py-4 bg-white/10 backdrop-blur text-white font-semibold rounded-xl border border-white/30 hover:bg-white/20 hover:scale-105 transition-all duration-300"
             >
-              <MessageCircle className="w-4 h-4" />
-              WhatsApp Us
-            </a>
+              Browse Projects
+            </Link>
           </div>
         </div>
       </div>

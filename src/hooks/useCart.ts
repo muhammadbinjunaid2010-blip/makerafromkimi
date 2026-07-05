@@ -9,13 +9,13 @@ export interface CartItem {
   quantity: number;
 }
 
-const CART_STORAGE_KEY = "electrocart_cart";
+const CART_STORAGE_KEY = "makera_cart";
 
 function getSessionId(): string {
-  let sessionId = localStorage.getItem("electrocart_session");
+  let sessionId = localStorage.getItem("makera_session");
   if (!sessionId) {
     sessionId = "sess_" + Math.random().toString(36).substring(2, 15);
-    localStorage.setItem("electrocart_session", sessionId);
+    localStorage.setItem("makera_session", sessionId);
   }
   return sessionId;
 }

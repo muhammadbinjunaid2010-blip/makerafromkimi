@@ -38,7 +38,7 @@ export default function Cart() {
   }
 
   const generateWhatsAppMessage = () => {
-    let message = "Hello ElectroCart! I'd like to order:\n\n";
+    let message = "Hello Makera! I'd like to order:\n\n";
     items.forEach((item) => {
       message += `- ${item.productName} x${item.quantity} - Rs. ${(parseFloat(item.productPrice) * item.quantity).toLocaleString()}\n`;
     });
