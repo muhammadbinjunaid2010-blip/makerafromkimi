@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { Link } from "react-router";
-import { MessageCircle } from "lucide-react";
 
 export default function Hero3D() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

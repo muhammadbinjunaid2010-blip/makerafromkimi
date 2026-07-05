@@ -11,14 +11,11 @@ import {
   Activity,
   Plus,
   Search,
-  ArrowRight,
-  Sparkles,
   Clock,
   MessageCircle,
   Award,
   Zap,
   UserPlus,
-  CalendarCheck,
 } from "lucide-react";
 
 // TODO: Fetch discussions from database

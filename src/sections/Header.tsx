@@ -1,12 +1,22 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
-import { Search, ShoppingCart, Menu, X, MessageCircle } from "lucide-react";
+import { Search, ShoppingCart, Menu, X, MessageCircle, User, LayoutDashboard, LogOut } from "lucide-react";
 import { useCartContext } from "../App";
+import { useAuth } from "../hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { totalItems } = useCartContext();
+  const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
 
   const isHome = location.pathname === "/";
@@ -85,7 +95,8 @@ export default function Header() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
-          <button
+          <Link
+            to="/search"
             className={`p-2 rounded-lg transition-colors ${
               scrolled || !isHome
                 ? "text-slate-600 hover:bg-slate-100"
@@ -94,7 +105,7 @@ export default function Header() {
             aria-label="Search"
           >
             <Search className="w-5 h-5" />
-          </button>
+          </Link>
 
           <Link
             to="/cart"
@@ -112,6 +123,59 @@ export default function Header() {
               </span>
             )}
           </Link>
+
+          {/* Auth - Desktop */}
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={`hidden sm:flex p-1 rounded-full transition-colors ${
+                    scrolled || !isHome
+                      ? "hover:bg-slate-100"
+                      : "hover:bg-white/10"
+                  }`}
+                >
+                  <Avatar className="h-8 w-8 border">
+                    <AvatarImage src={user?.avatar || ""} />
+                    <AvatarFallback className="text-xs font-medium">
+                      {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium truncate">{user?.name || "User"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email || ""}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => window.location.href = "/dashboard"}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => window.location.href = "/dashboard/profile"}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>My Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              to="/login"
+              className={`hidden sm:inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${
+                scrolled || !isHome
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-white text-slate-900 hover:bg-white/90"
+              }`}
+            >
+              Sign in
+            </Link>
+          )}
 
           <a
             href="https://wa.me/94771234567"
@@ -161,11 +225,28 @@ export default function Header() {
                       window.location.href = "/";
                     }
                   }}
-                  className="text-left text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50"
-                >
-                  {link.label}
-                </button>
-              )
+                  className="text-left text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50"              >
+                {link.label}
+              </button>
+            )
+          )}
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-slate-50"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 bg-primary text-primary-foreground font-medium py-2.5 px-4 rounded-lg"
+              >
+                Sign in
+              </Link>
             )}
             <a
               href="https://wa.me/94771234567"

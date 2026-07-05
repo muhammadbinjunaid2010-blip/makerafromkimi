@@ -1,38 +1,24 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { trpc } from "@/providers/trpc";
-import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Mail, Lock, Eye, EyeOff, Chrome } from "lucide-react";
+import { LOGIN_PATH } from "@/const";
+import { Loader2, ArrowLeft, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const resetSuccess = searchParams.get("reset") === "success";
-  const verified = searchParams.get("verified") === "true";
-  const { isAuthenticated } = useAuth();
-
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: () => {
-      navigate("/dashboard");
-    },
-    onError: (err) => {
-      setError(err.message);
-    },
-  });
-
-  const loginGoogleMutation = trpc.auth.loginGoogle.useMutation({
+  const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
       navigate("/dashboard");
     },
@@ -44,26 +30,14 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    loginMutation.mutate({ email, password, rememberMe });
-  };
 
-  const handleGoogleLogin = () => {
-    // Simulate Google login - in production, this would redirect to Google OAuth
-    // For now, we'll use a mock Google login
-    setError("");
-    loginGoogleMutation.mutate({
-      email: email || "user@gmail.com",
-      name: email ? email.split("@")[0] : "Google User",
-      googleId: `google_${Date.now()}`,
-      avatar: "",
-    });
-  };
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
-  // If already authenticated, redirect to dashboard
-  if (isAuthenticated) {
-    navigate("/dashboard");
-    return null;
-  }
+    registerMutation.mutate({ name, email, password });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-4">
@@ -72,37 +46,43 @@ export default function Login() {
           to="/"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
+          <ArrowLeft className="w-4 h-4" />
           Back to home
         </Link>
 
         <Card className="border shadow-sm">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-2xl font-bold tracking-tight">
-              Welcome back
+              Create an account
             </CardTitle>
             <CardDescription>
-              Sign in to your Makera account
+              Join the Makera community and start building
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {resetSuccess && (
-              <div className="bg-green-50 text-green-700 text-sm rounded-lg p-3 text-center mb-4">
-                Password reset successfully! Please sign in with your new password.
-              </div>
-            )}
-
-            {verified && (
-              <div className="bg-green-50 text-green-700 text-sm rounded-lg p-3 text-center mb-4">
-                Email verified successfully! You can now sign in.
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <div className="bg-destructive/10 text-destructive text-sm rounded-lg p-3 text-center">
                   {error}
                 </div>
               )}
+
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="pl-10"
+                    required
+                    minLength={2}
+                  />
+                </div>
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -121,61 +101,59 @@ export default function Login() {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-xs text-muted-foreground hover:text-foreground hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                    placeholder="At least 8 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10"
                     required
+                    minLength={8}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    tabIndex={-1}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="remember-me"
-                  checked={rememberMe}
-                  onCheckedChange={setRememberMe}
-                />
-                <Label htmlFor="remember-me" className="text-sm font-normal cursor-pointer">
-                  Remember me
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Repeat your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-10"
+                    required
+                    minLength={8}
+                  />
+                </div>
               </div>
 
               <Button
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={loginMutation.isPending}
+                disabled={registerMutation.isPending}
               >
-                {loginMutation.isPending ? (
+                {registerMutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Signing in...
+                    Creating account...
                   </>
                 ) : (
-                  "Sign in"
+                  "Create account"
                 )}
               </Button>
             </form>
@@ -187,29 +165,14 @@ export default function Login() {
               </span>
             </div>
 
-            <Button
-              variant="outline"
-              className="w-full"
-              size="lg"
-              onClick={handleGoogleLogin}
-              disabled={loginGoogleMutation.isPending}
-            >
-              {loginGoogleMutation.isPending ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Chrome className="w-4 h-4 mr-2" />
-              )}
-              Sign in with Google
-            </Button>
-
-            <div className="text-center mt-6">
+            <div className="text-center">
               <p className="text-sm text-muted-foreground">
-                Don't have an account?{" "}
+                Already have an account?{" "}
                 <Link
-                  to="/register"
+                  to={LOGIN_PATH}
                   className="font-medium text-foreground hover:underline"
                 >
-                  Create one
+                  Sign in
                 </Link>
               </p>
             </div>

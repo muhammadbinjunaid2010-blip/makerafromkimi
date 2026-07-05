@@ -1,18 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import {
   Clock,
   User,
   Heart,
-  Eye,
   BookOpen,
   TrendingUp,
-  MessageCircle,
   Plus,
   X,
   Search,
-  ArrowRight,
-  Sparkles,
   Calendar,
   Tag,
 } from "lucide-react";
